@@ -36,6 +36,9 @@ export const App = () => {
       ),
     )
 
+  const handleDeleteButtonClick = (id: string) =>
+    setTasks(prev => prev.filter(task => task.id !== id))
+
   return (
     <main className="flex w-80 flex-col items-center justify-center gap-5 rounded-xl border border-sky-600 px-5 py-8 max-[320px]:max-w-72">
       <h1 className="text-3xl font-semibold">Todo List</h1>
@@ -54,6 +57,7 @@ export const App = () => {
             isCompleted={isCompleted}
             title={title}
             handleComplete={handleCompleteButtonClick}
+            handleDelete={handleDeleteButtonClick}
           />
         ))}
       </TodoList>
