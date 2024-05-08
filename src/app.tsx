@@ -1,3 +1,5 @@
+import { ChangeEvent, MouseEvent, useState } from 'react'
+
 import { NewTaskForm } from './components/new-task-form'
 import { Todo } from './components/todo'
 import { TodoList } from './components/todo-list'
@@ -6,18 +8,36 @@ export interface TaskProps {
   title: string
 }
 
-const tasks = [{ title: 'task 1' }, { title: 'task 2' }, { title: 'task 3' }]
+export const App = () => {
+  const [inputData, setInputData] = useState('')
+  const [tasks, setTasks] = useState<TaskProps[]>([])
 
-export const App = () => (
-  <main className="flex w-80 flex-col items-center justify-center gap-5 rounded-xl border border-sky-600 px-5 py-8 max-[320px]:max-w-72">
-    <h1 className="text-3xl font-semibold">Todo List</h1>
+  const handleInputChange = ({ target }: ChangeEvent<HTMLInputElement>) =>
+    setInputData(target.value)
 
-    <NewTaskForm />
+  const handleAddButtonClick = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault()
 
-    <TodoList>
-      {tasks.map(({ title }, i) => (
-        <Todo key={i} title={title} />
-      ))}
-    </TodoList>
-  </main>
-)
+    setTasks(prev => [...prev, { title: inputData }])
+
+    setInputData('')
+  }
+
+  return (
+    <main className="flex w-80 flex-col items-center justify-center gap-5 rounded-xl border border-sky-600 px-5 py-8 max-[320px]:max-w-72">
+      <h1 className="text-3xl font-semibold">Todo List</h1>
+
+      <NewTaskForm
+        data={inputData}
+        handleChange={handleInputChange}
+        handleAdd={handleAddButtonClick}
+      />
+
+      <TodoList>
+        {tasks.map(({ title }, i) => (
+          <Todo key={i} title={title} />
+        ))}
+      </TodoList>
+    </main>
+  )
+}
