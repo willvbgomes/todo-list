@@ -4,8 +4,12 @@ import { NewTaskForm } from './components/new-task-form'
 import { Todo } from './components/todo'
 import { TodoList } from './components/todo-list'
 
+import { v4 as uuidv4 } from 'uuid'
+
 export interface TaskProps {
+  id: string
   title: string
+  isCompleted: boolean
 }
 
 export const App = () => {
@@ -18,10 +22,19 @@ export const App = () => {
   const handleAddButtonClick = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
-    setTasks(prev => [...prev, { title: inputData }])
-
+    setTasks(prev => [
+      ...prev,
+      { id: uuidv4(), isCompleted: false, title: inputData },
+    ])
     setInputData('')
   }
+
+  const handleCompleteButtonClick = (id: string) =>
+    setTasks(prev =>
+      prev.map(task =>
+        task.id === id ? { ...task, isCompleted: !task.isCompleted } : task,
+      ),
+    )
 
   return (
     <main className="flex w-80 flex-col items-center justify-center gap-5 rounded-xl border border-sky-600 px-5 py-8 max-[320px]:max-w-72">
@@ -34,8 +47,14 @@ export const App = () => {
       />
 
       <TodoList>
-        {tasks.map(({ title }, i) => (
-          <Todo key={i} title={title} />
+        {tasks.map(({ id, isCompleted, title }) => (
+          <Todo
+            key={id}
+            id={id}
+            isCompleted={isCompleted}
+            title={title}
+            handleComplete={handleCompleteButtonClick}
+          />
         ))}
       </TodoList>
     </main>
