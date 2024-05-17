@@ -1,10 +1,11 @@
-import { ChangeEvent, MouseEvent, useState } from 'react'
+import { ChangeEvent, MouseEvent, useEffect, useState } from 'react'
 
 import { NewTaskForm } from './components/new-task-form'
 import { Todo } from './components/todo'
 import { TodoList } from './components/todo-list'
 
 import { v4 as uuidv4 } from 'uuid'
+import localforage from 'localforage'
 
 export interface TaskProps {
   id: string
@@ -15,6 +16,19 @@ export interface TaskProps {
 export const App = () => {
   const [inputData, setInputData] = useState('')
   const [tasks, setTasks] = useState<TaskProps[]>([])
+
+  useEffect(() => {
+    localforage
+      .getItem('todo-list')
+      .then(value => (value ? setTasks(value as TaskProps[]) : setTasks([])))
+      .catch(error => console.log(error.message))
+  }, [])
+
+  useEffect(() => {
+    localforage
+      .setItem('todo-list', tasks)
+      .catch(error => console.log(error.message))
+  }, [tasks])
 
   const handleInputChange = ({ target }: ChangeEvent<HTMLInputElement>) =>
     setInputData(target.value)
